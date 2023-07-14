@@ -1,6 +1,6 @@
 import { ProgressViewIOS, StyleSheet, Text, View } from 'react-native'
 
-import * as ExpoUserIdentity from 'expo-user-identity'
+import { getUserIdentity } from 'expo-user-identity'
 import { useEffect, useState } from 'react'
 
 export default function App() {
@@ -8,7 +8,7 @@ export default function App() {
 
   useEffect(() => {
     ;(async () => {
-      ExpoUserIdentity.getUserIdentity().then((userIdentity) => {
+      getUserIdentity().then((userIdentity) => {
         setUserIdentity(userIdentity)
       })
     })()
