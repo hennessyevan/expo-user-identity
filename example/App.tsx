@@ -1,13 +1,24 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { ProgressViewIOS, StyleSheet, Text, View } from 'react-native'
 
-import * as ExpoUserIdentity from 'expo-user-identity';
+import * as ExpoUserIdentity from 'expo-user-identity'
+import { useEffect, useState } from 'react'
 
 export default function App() {
+  const [userIdentity, setUserIdentity] = useState<string>()
+
+  useEffect(() => {
+    ;(async () => {
+      ExpoUserIdentity.getUserIdentity().then((userIdentity) => {
+        setUserIdentity(userIdentity)
+      })
+    })()
+  }, [])
+
   return (
     <View style={styles.container}>
-      <Text>{ExpoUserIdentity.hello()}</Text>
+      {userIdentity ? <Text>{userIdentity}</Text> : <ProgressViewIOS />}
     </View>
-  );
+  )
 }
 
 const styles = StyleSheet.create({
@@ -17,4 +28,4 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-});
+})

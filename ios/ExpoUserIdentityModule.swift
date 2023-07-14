@@ -1,43 +1,30 @@
 import ExpoModulesCore
 
-public class ExpoUserIdentityModule: Module {
-  // Each module class must implement the definition function. The definition consists of components
-  // that describes the module's functionality and behavior.
-  // See https://docs.expo.dev/modules/module-api for more details about available components.
+import CloudKit
+import Foundation
+
+public class ExpoSettingsModule: Module {
   public func definition() -> ModuleDefinition {
-    // Sets the name of the module that JavaScript code will use to refer to the module. Takes a string as an argument.
-    // Can be inferred from module's class name, but it's recommended to set it explicitly for clarity.
-    // The module will be accessible from `requireNativeModule('ExpoUserIdentity')` in JavaScript.
-    Name("ExpoUserIdentity")
+    Name("ExpoSettings")
 
-    // Sets constant properties on the module. Can take a dictionary or a closure that returns a dictionary.
-    Constants([
-      "PI": Double.pi
-    ])
+    AsyncFunction("getUserIdentity") { (promise: Promise) in
+      CKContainer(identifier: "iCloud.com.hennessyevan.pets").fetchUserRecordID() { recordID, error in
 
-    // Defines event names that the module can send to JavaScript.
-    Events("onChange")
+        if let result = recordID?.recordName {
+          promise.resolve(result)
+        } else {
+          if let ckerror = error as? CKError, ckerror.code == CKError.notAuthenticated {
+            promise.reject("NO_ACCOUNT_ACCESS_ERROR", "No iCloud account is associated with the device, or access to the account is restricted");
+            return;
+          }
 
-    // Defines a JavaScript synchronous function that runs the native code on the JavaScript thread.
-    Function("hello") {
-      return "Hello world! 👋"
-    }
-
-    // Defines a JavaScript function that always returns a Promise and whose native code
-    // is by default dispatched on the different thread than the JavaScript runtime runs on.
-    AsyncFunction("setValueAsync") { (value: String) in
-      // Send an event to JavaScript.
-      self.sendEvent("onChange", [
-        "value": value
-      ])
-    }
-
-    // Enables the module to be used as a native view. Definition components that are accepted as part of the
-    // view definition: Prop, Events.
-    View(ExpoUserIdentityView.self) {
-      // Defines a setter for the `name` prop.
-      Prop("name") { (view: ExpoUserIdentityView, prop: String) in
-        print(prop)
+          if let error = error as? NSError {          
+            promise.reject("NS_ERROR", error.localizedDescription);
+            return;
+          }
+          
+          promise.reject("UNKNOWN_ERROR", "An unknown error occurred")
+        }
       }
     }
   }
