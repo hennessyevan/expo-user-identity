@@ -3,12 +3,16 @@ import ExpoModulesCore
 import CloudKit
 import Foundation
 
-public class ExpoSettingsModule: Module {
+public class ExpoUserIdentityModule: Module {
   public func definition() -> ModuleDefinition {
-    Name("ExpoSettings")
+    Name("ExpoUserIdentity")
 
     AsyncFunction("getUserIdentity") { (promise: Promise) in
-      CKContainer(identifier: "iCloud.com.hennessyevan.pets").fetchUserRecordID() { recordID, error in
+      guard let ckIdentifier = Bundle.main.object(forInfoDictionaryKey: "CK_CONTAINER_IDENTIFIER") as String else {
+        return
+      }
+
+      CKContainer(identifier: ckIdentifier).fetchUserRecordID() { recordID, error in
 
         if let result = recordID?.recordName {
           promise.resolve(result)
