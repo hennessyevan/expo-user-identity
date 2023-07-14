@@ -1,0 +1,9 @@
+{
+  "platforms": ["ios", "android", "web"],
+  "ios": {
+    "modules": ["ExpoUserIdentityModule"]
+  },
+  "android": {
+    "modules": ["expo.modules.useridentity.ExpoUserIdentityModule"]
+  }
+}
