@@ -8,7 +8,7 @@ public class ExpoUserIdentityModule: Module {
     Name("ExpoUserIdentity")
 
     AsyncFunction("getUserIdentity") { (promise: Promise) in
-      guard let ckIdentifier = Bundle.main.object(forInfoDictionaryKey: "CK_CONTAINER_IDENTIFIER") as String else {
+      guard let ckIdentifier = Bundle.main.object(forInfoDictionaryKey: "CK_CONTAINER_IDENTIFIER") as? String else {
         return
       }
 
