@@ -1,6 +1,6 @@
 {
   "name": "expo-user-identity",
-  "version": "0.1.0-alpha.1",
+  "version": "0.0.0-development",
   "description": "Gets the user identity for the device | iCloud ID or Email",
   "main": "build/index.js",
   "types": "build/index.d.ts",
@@ -16,7 +16,7 @@
     "open:android": "open -a \"Android Studio\" example/android",
     "android": "expo run:android",
     "ios": "expo run:ios",
-    "release": "npx semantic-release"
+    "semantic-release": "semantic-release"
   },
   "keywords": [
     "react-native",
