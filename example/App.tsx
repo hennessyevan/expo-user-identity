@@ -1,4 +1,4 @@
-import { ProgressViewIOS, StyleSheet, Text, View } from 'react-native'
+import { StyleSheet, Text, View } from 'react-native'
 
 import { getUserIdentity } from 'expo-user-identity'
 import { useEffect, useState } from 'react'
@@ -16,7 +16,7 @@ export default function App() {
 
   return (
     <View style={styles.container}>
-      {userIdentity ? <Text>{userIdentity}</Text> : <ProgressViewIOS />}
+      {userIdentity ? <Text>{userIdentity}</Text> : <Text>loading</Text>}
     </View>
   )
 }

@@ -1,47 +1,72 @@
 package expo.modules.useridentity
 
+import expo.modules.kotlin.Promise
 import expo.modules.kotlin.modules.Module
 import expo.modules.kotlin.modules.ModuleDefinition
+import expo.modules.kotlin.exception.CodedException
+import expo.modules.kotlin.exception.Exceptions
+
+import android.accounts.Account
+import android.content.Context
+import android.accounts.AccountManager
+import android.app.Activity
+
+private const val USER_IDENTITY_CODE = 1;
 
 class ExpoUserIdentityModule : Module() {
-  // Each module class must implement the definition function. The definition consists of components
-  // that describes the module's functionality and behavior.
-  // See https://docs.expo.dev/modules/module-api for more details about available components.
+  private var pendingPromise: Promise? = null
+  private fun handleError(promise: Promise, err: Exception) {
+    promise.reject("[ExpoUserIdentity]", err.message, err)
+  }
+
   override fun definition() = ModuleDefinition {
-    // Sets the name of the module that JavaScript code will use to refer to the module. Takes a string as an argument.
-    // Can be inferred from module's class name, but it's recommended to set it explicitly for clarity.
-    // The module will be accessible from `requireNativeModule('ExpoUserIdentity')` in JavaScript.
     Name("ExpoUserIdentity")
 
-    // Sets constant properties on the module. Can take a dictionary or a closure that returns a dictionary.
-    Constants(
-      "PI" to Math.PI
-    )
+    AsyncFunction("getUserIdentity") { message: String?, accountType: String?, promise: Promise ->
+      val allowableAccountTypes: Array<out String>
+      if (accountType != null) {
+        allowableAccountTypes = arrayOf(accountType)
+      } else {
+        allowableAccountTypes = arrayOf("com.google")
+      }
 
-    // Defines event names that the module can send to JavaScript.
-    Events("onChange")
+      val description = message ?: "Please sign in to continue"
 
-    // Defines a JavaScript synchronous function that runs the native code on the JavaScript thread.
-    Function("hello") {
-      "Hello world! 👋"
+      val intent = AccountManager.newChooseAccountIntent(
+        null,
+        null,
+        allowableAccountTypes,
+        description,
+        null,
+        null,
+        null
+      )
+
+      pendingPromise = promise
+
+      currentActivity.startActivityForResult(intent, USER_IDENTITY_CODE)
     }
 
-    // Defines a JavaScript function that always returns a Promise and whose native code
-    // is by default dispatched on the different thread than the JavaScript runtime runs on.
-    AsyncFunction("setValueAsync") { value: String ->
-      // Send an event to JavaScript.
-      sendEvent("onChange", mapOf(
-        "value" to value
-      ))
-    }
+    OnActivityResult { _, (requestCode, resultCode, intent) ->
+      if (requestCode != USER_IDENTITY_CODE || pendingPromise == null) {
+        return@OnActivityResult
+      }
 
-    // Enables the module to be used as a native view. Definition components that are accepted as part of
-    // the view definition: Prop, Events.
-    View(ExpoUserIdentityView::class) {
-      // Defines a setter for the `name` prop.
-      Prop("name") { view: ExpoUserIdentityView, prop: String ->
-        println(prop)
+      val promise = pendingPromise!!
+
+      if (resultCode == Activity.RESULT_OK && intent != null) {
+        try {
+          val accountName = intent.getStringExtra(AccountManager.KEY_ACCOUNT_NAME)
+          promise.resolve(accountName)
+        } catch (e: CodedException) {
+          handleError(promise, e)
+        }
       }
     }
   }
+
+  private val context
+    get() = requireNotNull(appContext.reactContext)
+  private val currentActivity
+    get() = appContext.currentActivity ?: throw Exceptions.MissingActivity()
 }
