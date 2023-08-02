@@ -1,6 +1,8 @@
 import { ExpoConfig } from 'expo/config'
 import {
+  AndroidConfig,
   ConfigPlugin,
+  withAndroidManifest,
   withEntitlementsPlist,
   withInfoPlist,
 } from 'expo/config-plugins'
@@ -19,6 +21,10 @@ const withUserIdentity: ConfigPlugin<IOSProps> = (
   config,
   { cloudkitContainerIdentifier } = {}
 ) => {
+  config = AndroidConfig.Permissions.withPermissions(config, [
+    'android.permission.GET_ACCOUNTS',
+  ])
+
   config = withInfoPlist(config, (config) => {
     if (!config.ios?.bundleIdentifier) {
       return config
@@ -57,16 +63,9 @@ export function setICloudEntitlements(
 
   cloudkitContainerIdentifier ||= `iCloud.${config.ios.bundleIdentifier}`
 
-  // entitlements['com.apple.developer.icloud-container-environment'] = _env
   entitlements['com.apple.developer.icloud-container-identifiers'] = [
     cloudkitContainerIdentifier,
   ]
-  // entitlements['com.apple.developer.ubiquity-container-identifiers'] = [
-  //   cloudkitContainerIdentifier,
-  // ]
-  // entitlements[
-  //   'com.apple.developer.ubiquity-kvstore-identifier'
-  // ] = `$(TeamIdentifierPrefix)${config.ios.bundleIdentifier}`
 
   entitlements['com.apple.developer.icloud-services'] = ['CloudKit']
 
