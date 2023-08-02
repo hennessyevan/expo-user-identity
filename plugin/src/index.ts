@@ -21,10 +21,6 @@ const withUserIdentity: ConfigPlugin<IOSProps> = (
   config,
   { cloudkitContainerIdentifier } = {}
 ) => {
-  config = AndroidConfig.Permissions.withPermissions(config, [
-    'android.permission.GET_ACCOUNTS',
-  ])
-
   config = withInfoPlist(config, (config) => {
     if (!config.ios?.bundleIdentifier) {
       return config
