@@ -21,5 +21,5 @@ import { getUserIdentity } from 'expo-user-identity'
 ## Roadmap
 
 - [x] iOS support
-- [ ] Android support
+- [x] Android support
 - [ ] Web support (if possible, likely not)
