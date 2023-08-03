@@ -7,7 +7,10 @@ export async function getUserIdentity(
 ): Promise<string> {
   if (Platform.OS === 'android') {
     accountType ||= 'com.google'
+    return ExpoIdentityModule.getUserIdentity(message, accountType)
+  } else if (Platform.OS === 'ios') {
+    return ExpoIdentityModule.getUserIdentity()
   }
 
-  return ExpoIdentityModule.getUserIdentity(message, accountType)
+  return ExpoIdentityModule.getUserIdentity()
 }
