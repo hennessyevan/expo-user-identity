@@ -57,6 +57,8 @@ export function setICloudEntitlements(
     )
   }
 
+  entitlements['com.apple.developer.icloud-container-environment'] = _env
+
   cloudkitContainerIdentifier ||= `iCloud.${config.ios.bundleIdentifier}`
 
   entitlements['com.apple.developer.icloud-container-identifiers'] = [
