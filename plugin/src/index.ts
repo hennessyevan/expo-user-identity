@@ -25,7 +25,7 @@ type IOSProps = {
 
 const withUserIdentity: ConfigPlugin<IOSProps> = (
   config,
-  { cloudkitContainerIdentifier } = {}
+  { cloudkitContainerIdentifier, iCloudContainerEnvironment } = {}
 ) => {
   config = withInfoPlist(config, (config) => {
     if (!config.ios?.bundleIdentifier) {
@@ -40,7 +40,7 @@ const withUserIdentity: ConfigPlugin<IOSProps> = (
   config = withEntitlementsPlist(config, (config) => {
     config.modResults = setICloudEntitlements(
       config,
-      { cloudkitContainerIdentifier },
+      { cloudkitContainerIdentifier, iCloudContainerEnvironment },
       config.modResults
     )
     return config
@@ -51,7 +51,10 @@ const withUserIdentity: ConfigPlugin<IOSProps> = (
 
 export function setICloudEntitlements(
   config: Pick<ExpoConfig, 'ios'>,
-  { cloudkitContainerIdentifier, iCloudContainerEnvironment }: IOSProps,
+  {
+    cloudkitContainerIdentifier,
+    iCloudContainerEnvironment = 'Development',
+  }: IOSProps,
   {
     'com.apple.developer.icloud-container-environment': _env,
     ...entitlements
