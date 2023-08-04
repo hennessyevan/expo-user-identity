@@ -1,8 +1,6 @@
 import { ExpoConfig } from 'expo/config'
 import {
-  AndroidConfig,
   ConfigPlugin,
-  withAndroidManifest,
   withEntitlementsPlist,
   withInfoPlist,
 } from 'expo/config-plugins'
@@ -15,6 +13,14 @@ type IOSProps = {
    * @see https://developer.apple.com/documentation/cloudkit/ckcontainer/1399193-init
    */
   cloudkitContainerIdentifier?: string
+
+  /**
+   * Sets the `com.apple.developer.icloud-container-environment` entitlement which is read by EAS CLI to set
+   * the `iCloudContainerEnvironment` in the `xcodebuild` `exportOptionsPlist`.
+   *
+   * Available options: https://developer.apple.com/documentation/bundleresources/entitlements/com_apple_developer_icloud-container-environment
+   */
+  iCloudContainerEnvironment?: 'Development' | 'Production'
 }
 
 const withUserIdentity: ConfigPlugin<IOSProps> = (
@@ -45,7 +51,7 @@ const withUserIdentity: ConfigPlugin<IOSProps> = (
 
 export function setICloudEntitlements(
   config: Pick<ExpoConfig, 'ios'>,
-  { cloudkitContainerIdentifier }: IOSProps,
+  { cloudkitContainerIdentifier, iCloudContainerEnvironment }: IOSProps,
   {
     'com.apple.developer.icloud-container-environment': _env,
     ...entitlements
@@ -57,13 +63,20 @@ export function setICloudEntitlements(
     )
   }
 
-  entitlements['com.apple.developer.icloud-container-environment'] = _env
+  entitlements['com.apple.developer.icloud-container-environment'] =
+    iCloudContainerEnvironment
 
   cloudkitContainerIdentifier ||= `iCloud.${config.ios.bundleIdentifier}`
 
   entitlements['com.apple.developer.icloud-container-identifiers'] = [
     cloudkitContainerIdentifier,
   ]
+  entitlements['com.apple.developer.ubiquity-container-identifiers'] = [
+    `iCloud.${config.ios.bundleIdentifier}`,
+  ]
+  entitlements[
+    'com.apple.developer.ubiquity-kvstore-identifier'
+  ] = `$(TeamIdentifierPrefix)${config.ios.bundleIdentifier}`
 
   entitlements['com.apple.developer.icloud-services'] = ['CloudKit']
 

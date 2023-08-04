@@ -29,7 +29,10 @@
     "plugins": [
       [
         "../app.plugin.js",
-        { "cloudkitContainerIdentifier": "iCloud.com.hennessyevan.pets" }
+        {
+          "cloudkitContainerIdentifier": "iCloud.com.hennessyevan.eui-test",
+          "iCloudContainerEnvironment": "Development"
+        }
       ]
     ]
   }

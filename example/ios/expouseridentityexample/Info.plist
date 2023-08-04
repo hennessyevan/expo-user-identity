@@ -32,7 +32,7 @@
     <key>CFBundleVersion</key>
     <string>1</string>
     <key>CK_CONTAINER_IDENTIFIER</key>
-    <string>iCloud.com.hennessyevan.pets</string>
+    <string>iCloud.com.hennessyevan.eui-test</string>
     <key>LSRequiresIPhoneOS</key>
     <true/>
     <key>NSAppTransportSecurity</key>
