@@ -10,6 +10,19 @@ To install this module, run the following command:
 npx expo install expo-user-identity
 ```
 
+## Configuration
+This module also includes a plugin configuration. For iCloud, the default container environment is set to "Development" but when you push your iCloud container to "Production", you need to set that in your plugins config:
+```json
+    "plugins": [
+      [
+        "expo-user-identity",
+        {          
+          "iCloudContainerEnvironment": "Production"
+        }
+      ]
+    ]
+```
+
 ## Usage
 
 This module only has one method, `getUserIdentity()`, which returns a promise that resolves to a string.
