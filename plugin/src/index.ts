@@ -81,8 +81,6 @@ export function setICloudEntitlements(
     'com.apple.developer.ubiquity-kvstore-identifier'
   ] = `$(TeamIdentifierPrefix)${config.ios.bundleIdentifier}`
 
-  entitlements['com.apple.developer.icloud-services'] = ['CloudKit']
-
   return entitlements
 }
 

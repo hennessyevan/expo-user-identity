@@ -23,6 +23,19 @@ This module also includes a plugin configuration. For iCloud, the default contai
     ]
 ```
 
+Add the following lines to your `app.json/app.config.js` file to enable the CloudKit capabilities automatically:
+
+```json
+    ...,
+    "ios": {
+      ...
+      "entitlements": {
+        "com.apple.developer.icloud-services": ["CloudKit"]
+      },
+    },
+    ...
+```
+
 ## Usage
 
 This module only has one method, `getUserIdentity()`, which returns a promise that resolves to a string.
